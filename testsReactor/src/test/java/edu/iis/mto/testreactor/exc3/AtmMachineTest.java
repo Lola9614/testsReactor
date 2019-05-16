@@ -43,6 +43,9 @@ public class AtmMachineTest {
 
     AuthenticationToken authenticationToken;
 
+    @Captor
+    ArgumentCaptor<Money> moneyArgumentCaptor;
+
     @Before
     public void setup(){
         atmMachine = new AtmMachine(cardProviderService,bankService,moneyDepot);
@@ -127,5 +130,17 @@ public class AtmMachineTest {
         atmMachine.withdraw(money,card);
 
         verify(bankService,times(1)).startTransaction(authenticationTokenGlobal.capture());
+    }
+
+    @Test
+    public void shouldCallChargeMethodOnce(){
+        when(cardProviderService.authorize(Mockito.any())).thenReturn(Optional.of((authenticationToken)));
+        when(bankService.charge(Mockito.any(),Mockito.any())).thenReturn(true);
+        when(moneyDepot.releaseBanknotes(Mockito.any())).thenReturn(true);
+
+
+        atmMachine.withdraw(money,card);
+
+        verify(bankService, times(1)).charge(authenticationTokenGlobal.capture(),moneyArgumentCaptor.capture());
     }
 }
