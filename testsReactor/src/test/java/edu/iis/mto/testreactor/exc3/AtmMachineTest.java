@@ -86,4 +86,13 @@ public class AtmMachineTest {
 
     }
 
+    @Test(expected = InsufficientFundsException.class)
+    public void shouldThrowExceptionIfCannotChargeAccount(){
+        when(cardProviderService.authorize(Mockito.any())).thenReturn(Optional.of((authenticationToken)));
+        when(bankService.charge(Mockito.any(),Mockito.any())).thenReturn(false);
+
+        atmMachine.withdraw(money,card);
+    }
+
+
 }
