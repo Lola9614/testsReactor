@@ -15,6 +15,8 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -103,5 +105,16 @@ public class AtmMachineTest {
 
 
         atmMachine.withdraw(money,card);
+    }
+
+    @Test
+    public void shouldNotInvokeAbortFunctionIfAllIsOk(){
+        when(cardProviderService.authorize(Mockito.any())).thenReturn(Optional.of((authenticationToken)));
+        when(bankService.charge(Mockito.any(),Mockito.any())).thenReturn(true);
+        when(moneyDepot.releaseBanknotes(Mockito.any())).thenReturn(true);
+
+        atmMachine.withdraw(money,card);
+
+        verify(bankService,times(0)).abort(authenticationTokenGlobal.capture());
     }
 }
