@@ -154,4 +154,16 @@ public class AtmMachineTest {
 
         verify(cardProviderService,times(1)).authorize(card);
     }
+
+
+    @Test
+    public void shouldCallReleaseBanknotesOnceIfAllIsProper(){
+        when(cardProviderService.authorize(Mockito.any())).thenReturn(Optional.of((authenticationToken)));
+        when(bankService.charge(Mockito.any(),Mockito.any())).thenReturn(true);
+        when(moneyDepot.releaseBanknotes(Mockito.any())).thenReturn(true);
+
+        atmMachine.withdraw(money,card);
+
+        verify(moneyDepot,times(1)).releaseBanknotes(banknoteList.capture());
+    }
 }
