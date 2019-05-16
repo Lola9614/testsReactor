@@ -143,4 +143,15 @@ public class AtmMachineTest {
 
         verify(bankService, times(1)).charge(authenticationTokenGlobal.capture(),moneyArgumentCaptor.capture());
     }
+
+    @Test
+    public void shouldCallAuthorizeMethodOnce(){
+        when(cardProviderService.authorize(Mockito.any())).thenReturn(Optional.of((authenticationToken)));
+        when(bankService.charge(Mockito.any(),Mockito.any())).thenReturn(true);
+        when(moneyDepot.releaseBanknotes(Mockito.any())).thenReturn(true);
+
+        atmMachine.withdraw(money,card);
+
+        verify(cardProviderService,times(1)).authorize(card);
+    }
 }
