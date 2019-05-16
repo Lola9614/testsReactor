@@ -36,7 +36,7 @@ public class AtmMachineTest {
     }
 
     @Test(expected = WrongMoneyAmountException.class)
-    public void shouldThrowWrongMoneyAmountException(){
+    public void shouldThrowExceptionIfAmountIsLessOrEqualsZero(){
 
         Money moneyForTestScope = Money.builder().withAmount(-10).withCurrency(Currency.PL).build();
         atmMachine.withdraw(moneyForTestScope, card);
