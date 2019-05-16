@@ -95,4 +95,13 @@ public class AtmMachineTest {
     }
 
 
+    @Test(expected = MoneyDepotException.class)
+    public void shouldThrowExceptionIfCannotRealesBanknotues(){
+        when(cardProviderService.authorize(Mockito.any())).thenReturn(Optional.of((authenticationToken)));
+        when(bankService.charge(Mockito.any(),Mockito.any())).thenReturn(true);
+        when(moneyDepot.releaseBanknotes(Mockito.any())).thenReturn(false);
+
+
+        atmMachine.withdraw(money,card);
+    }
 }
